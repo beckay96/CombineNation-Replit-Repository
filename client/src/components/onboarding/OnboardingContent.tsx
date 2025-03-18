@@ -8,11 +8,12 @@ import WelcomeStep from './WelcomeStep';
 import StepIndicator from './StepIndicator';
 import { useAppState } from '@/hooks/appState/AppStateContext';
 
-const ONBOARDING_STEPS = [
-  { number: 1, title: 'Create your account' },
-  { number: 2, title: 'Choose your experience' },
-  { number: 3, title: 'Personal details' }
-];
+// Define step constants to ensure consistency
+export const ONBOARDING_STEPS = [
+  { number: 0, title: 'Create your account' },
+  { number: 1, title: 'Choose your experience' },
+  { number: 2, title: 'Personal details' }
+] as const;
 
 interface OnboardingContentProps {
   step: number;
@@ -44,9 +45,21 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   // Only show step indicator for signup flow and after account creation
   const showStepIndicator = activeAuthTab === 'signup' && step > 0;
 
+  // Create dynamic steps array based on user selections
+  const getSteps = () => {
+    const steps = [...ONBOARDING_STEPS];
+    if (isAddingFamily) {
+      steps.push({ number: steps.length, title: 'Family setup' });
+    }
+    if (isAddingSchool) {
+      steps.push({ number: steps.length, title: 'School setup' });
+    }
+    return steps;
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
-      {showStepIndicator && <StepIndicator currentStep={step} steps={ONBOARDING_STEPS} />}
+      {showStepIndicator && <StepIndicator currentStep={step} steps={getSteps()} />}
 
       {step === 0 && (
         <div className="w-full max-w-lg mx-auto">
