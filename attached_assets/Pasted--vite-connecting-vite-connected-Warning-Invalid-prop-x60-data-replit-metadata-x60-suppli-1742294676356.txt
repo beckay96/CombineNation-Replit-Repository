@@ -1,0 +1,31 @@
+[vite] connecting...
+[vite] connected.
+Warning: Invalid prop &#x60;data-replit-metadata&#x60; supplied to &#x60;React.Fragment&#x60;. React.Fragment can only have &#x60;key&#x60; and &#x60;children&#x60; props.
+    at AuthForms (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/components/auth/auth-forms.tsx:57:47)
+    at div
+    at div
+    at AuthPage (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/pages/auth-page.tsx:24:27)
+    at Route (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7d89f17a:323:16)
+    at Switch (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7d89f17a:379:17)
+    at Router
+    at AppStateProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/hooks/appState/AppStateContext.tsx:20:36)
+    at AuthProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/hooks/use-auth.tsx:23:32)
+    at QueryClientProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7d89f17a:2805:3)
+    at App
+    at QueryClientProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7d89f17a:2805:3)
+at AuthForms (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/components/auth/auth-forms.tsx:57:47)
+at div
+at div
+at AuthPage (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/pages/auth-page.tsx:24:27)
+at Route (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7d89f17a:323:16)
+at Switch (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7d89f17a:379:17)
+at Router
+at AppStateProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/hooks/appState/AppStateContext.tsx:20:36)
+at AuthProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/src/hooks/use-auth.tsx:23:32)
+at QueryClientProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7d89f17a:2805:3)
+at App
+at QueryClientProvider (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7d89f17a:2805:3)
+at t.value (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://10133cf0-73b7-4848-ac8f-f5544cef7b8e-00-2b1ms5crc7np6.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

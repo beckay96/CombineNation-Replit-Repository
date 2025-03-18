@@ -94,22 +94,20 @@ export function AuthForms() {
               { number: 2, title: 'Choose your experience' },
               { number: 3, title: 'Personal details' }
             ].map((step, idx, arr) => (
-              <React.Fragment key={step.number}>
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`
-                    w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium
-                    ${step.number === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
-                  `}>
-                    {step.number}
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    {step.title}
-                  </span>
+              <div key={step.number} className="flex flex-col items-center gap-2">
+                <div className={`
+                  w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium
+                  ${step.number === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
+                `}>
+                  {step.number}
                 </div>
+                <span className="text-sm text-muted-foreground">
+                  {step.title}
+                </span>
                 {idx < arr.length - 1 && (
                   <div className="h-[2px] flex-1 mx-4 bg-muted" />
                 )}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>
