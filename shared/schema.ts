@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   fullName: text("full_name").notNull(),
   role: text("role").notNull().default("user"),
+  neonMode: boolean("neon_mode").default(false),
 });
 
 export const educationResources = pgTable("education_resources", {
