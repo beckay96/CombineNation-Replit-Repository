@@ -1,8 +1,6 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
-@font-face {
-  font-family: 'DyslexiaSans';
-  src: url('/fonts/DyslexiaSans.woff2') format('woff2');
-}
+@import url('https://fonts.cdnfonts.com/css/opendyslexic');
 
 @tailwind base;
 @tailwind components;
@@ -10,73 +8,75 @@
 
 @layer base {
   :root {
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --gradient-primary: linear-gradient(135deg, #9333ea, #38bdf8);
-    --gradient-secondary: linear-gradient(135deg, #f0abfc, #7dd3fc);
-  }
-
-  .neon-mode {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 263 90% 51%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 170 90% 51%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 263 90% 51%;
-  }
-
-  .light-mode {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 263 90% 51%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 187 100% 42%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 170 90% 51%;
+    --accent: 191 91% 76%;
     --accent-foreground: 240 5.9% 10%;
+    --fuschia: 328 85% 55%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 263 90% 51%;
+    --ring: 262.1 83.3% 57.8%;
+    --radius: 0.5rem;
   }
 
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262.1 83.3% 67.8%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 187 100% 52%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 191 91% 66%;
+    --accent-foreground: 0 0% 98%;
+    --fuschia: 328 85% 65%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262.1 83.3% 67.8%;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply font-['Open_Sans'] antialiased bg-background text-foreground;
+    @apply bg-background text-foreground;
   }
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-['DyslexiaSans'];
-  }
+/* Custom Fonts */
+.font-dyslexic {
+  font-family: 'OpenDyslexic', sans-serif;
+}
 
-  .glass-panel {
-    @apply backdrop-blur-lg bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-lg;
-  }
+.font-opensans {
+  font-family: 'Open Sans', sans-serif;
+}
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-fuchsia-500 to-blue-400;
-  }
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'OpenDyslexic', sans-serif;
 }
