@@ -4,12 +4,12 @@ export function useOnboardingSteps(): {
   getSteps: () => string[];
 } {
   const { isAddingFamily, isAddingSchool } = useAppState();
-  
+
   const getSteps = (): string[] => {
     const baseSteps = [
       'Create your account',
-      'Personal details',
-      'Choose your experience'
+      'Choose your experience',
+      'Personal details'
     ];
 
     if (isAddingFamily) {

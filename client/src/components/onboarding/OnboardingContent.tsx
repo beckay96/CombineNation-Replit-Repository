@@ -16,7 +16,7 @@ const ONBOARDING_STEPS = [
 
 interface OnboardingContentProps {
   step: number;
-  onSignupSubmit: (e: React.FormEvent) => Promise<void>;
+  onSignupSubmit: (data: { displayName: string; email: string; password: string; confirmPassword: string; }) => Promise<void>;
   onProfileSubmit: (data: ProfileDetails) => Promise<void>;
   onOptionSelect: (optionIndex: number) => void;
   onFamilySetupComplete: () => void;
@@ -25,14 +25,6 @@ interface OnboardingContentProps {
   isProcessing: boolean;
   accountExists?: boolean;
   activeAuthTab?: string;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  confirmPassword: string;
-  setConfirmPassword: (confirmPassword: string) => void;
-  displayName: string;
-  setDisplayName: (displayName: string) => void;
 }
 
 const OnboardingContent: React.FC<OnboardingContentProps> = ({
@@ -45,15 +37,7 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
   isLoading,
   isProcessing,
   accountExists,
-  activeAuthTab,
-  email,
-  setEmail,
-  password,
-  setPassword,
-  confirmPassword,
-  setConfirmPassword,
-  displayName,
-  setDisplayName
+  activeAuthTab
 }) => {
   const { isAddingFamily, isAddingSchool } = useAppState();
 
@@ -70,18 +54,8 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
             {activeAuthTab === 'login' ? 'Welcome Back to CombineNation' : 'Welcome to CombineNation'}
           </h1>
           <AccountCreationStep 
-            email={email} 
-            setEmail={setEmail} 
-            password={password} 
-            setPassword={setPassword} 
-            confirmPassword={confirmPassword} 
-            setConfirmPassword={setConfirmPassword}
-            displayName={displayName}
-            setDisplayName={setDisplayName}
-            onSubmit={onSignupSubmit} 
-            isLoading={isLoading || isProcessing} 
-            accountExists={accountExists} 
-            activeTab={activeAuthTab} 
+            onSubmit={onSignupSubmit}
+            isLoading={isLoading || isProcessing}
           />
         </div>
       )}

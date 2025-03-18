@@ -23,18 +23,27 @@ export function useOnboardingNavigation(
     console.log('Option selected:', optionIndex);
     try {
       setIsUpdatingRole(true);
-      
-      // If option is 3 (solo), we'll skip to completion in the parent handler
-      if (optionIndex === 3) {
+
+      if (optionIndex === 3) { // Solo option
         console.log('Solo option selected, completing onboarding');
-        // The completion will be handled by the parent component
-      } else if (isAddingFamily) {
-        // For family or both options, proceed to the next step (family setup)
+        // Skip family and school setup steps
+        setFamilyFinishedAdding(false);
+        setSchoolCreatedFully(false);
+        handleNext(); // Move to the next step (profile details)
+      } else if (optionIndex === 0) { // Family option
         console.log('Family option selected, moving to family setup');
+        setFamilyFinishedAdding(true);
+        setSchoolCreatedFully(false);
         handleNext();
-      } else if (isAddingSchool) {
-        // For educator option, proceed to the next step (school setup)
+      } else if (optionIndex === 1) { // Educator option
         console.log('Educator option selected, moving to school setup');
+        setFamilyFinishedAdding(false);
+        setSchoolCreatedFully(true);
+        handleNext();
+      } else if (optionIndex === 2) { // Both option
+        console.log('Both option selected, moving to family setup first');
+        setFamilyFinishedAdding(true);
+        setSchoolCreatedFully(true);
         handleNext();
       }
     } catch (error) {
