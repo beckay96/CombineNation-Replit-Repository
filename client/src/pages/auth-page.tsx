@@ -22,7 +22,7 @@ export default function AuthPage() {
       <div className="hidden md:flex items-center justify-center bg-primary/5 p-8">
         <div className="max-w-lg space-y-4">
           <h1 className="text-4xl font-dyslexia font-bold text-primary">
-            Welcome to the National Development Platform
+            Welcome to CombineNation
           </h1>
           <p className="text-lg text-muted-foreground">
             Join our platform to access educational resources, family management tools,
