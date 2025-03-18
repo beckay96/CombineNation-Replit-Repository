@@ -43,20 +43,20 @@ const ProfileDetailsStep: React.FC<ProfileDetailsStepProps> = ({
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="displayName">Display Name</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
-                id="displayName"
-                {...register('displayName')}
-                error={errors.displayName?.message}
+                id="firstName"
+                {...register('firstName')}
+                error={errors.firstName?.message}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="lastName">Last Name</Label>
               <Input
-                id="fullName"
-                {...register('fullName')}
-                error={errors.fullName?.message}
+                id="lastName"
+                {...register('lastName')}
+                error={errors.lastName?.message}
               />
             </div>
 

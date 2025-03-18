@@ -17,7 +17,7 @@ import { insertUserSchema, type InsertUser } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
 type LoginFormData = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -27,10 +27,10 @@ export function AuthForms() {
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(
-      insertUserSchema.pick({ username: true, password: true }),
+      insertUserSchema.pick({ email: true, password: true }),
     ),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -38,9 +38,9 @@ export function AuthForms() {
   const registerForm = useForm<InsertUser>({
     resolver: zodResolver(insertUserSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
-      fullName: "",
+      displayName: "",
     },
   });
 
@@ -63,10 +63,10 @@ export function AuthForms() {
           >
             <FormField
               control={loginForm.control}
-              name="username"
+              email="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -77,7 +77,7 @@ export function AuthForms() {
 
             <FormField
               control={loginForm.control}
-              name="password"
+              password="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
@@ -113,10 +113,10 @@ export function AuthForms() {
           >
             <FormField
               control={registerForm.control}
-              name="username"
+              email="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -127,10 +127,10 @@ export function AuthForms() {
 
             <FormField
               control={registerForm.control}
-              name="fullName"
+              displayName="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>Display Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -141,7 +141,7 @@ export function AuthForms() {
 
             <FormField
               control={registerForm.control}
-              name="password"
+              password="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
