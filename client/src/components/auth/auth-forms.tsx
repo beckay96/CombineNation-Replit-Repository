@@ -15,11 +15,23 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema, type InsertUser } from "@shared/schema";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
 
 type LoginFormData = {
   email: string;
   password: string;
 };
+
+// Extend the registration schema to include password confirmation
+const registerSchema = insertUserSchema.extend({
+  confirmPassword: z.string()
+    .min(1, "Password confirmation is required"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function AuthForms() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -35,14 +47,20 @@ export function AuthForms() {
     },
   });
 
-  const registerForm = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema),
+  const registerForm = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
       displayName: "",
     },
   });
+
+  const handleRegister = async (data: RegisterFormData) => {
+    const { confirmPassword, ...userData } = data;
+    registerMutation.mutate(userData as InsertUser);
+  };
 
   return (
     <Tabs
@@ -106,9 +124,7 @@ export function AuthForms() {
       <TabsContent value="register">
         <Form {...registerForm}>
           <form
-            onSubmit={registerForm.handleSubmit((data) =>
-              registerMutation.mutate(data)
-            )}
+            onSubmit={registerForm.handleSubmit(handleRegister)}
             className="space-y-4"
           >
             <FormField
@@ -145,6 +161,20 @@ export function AuthForms() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={registerForm.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
