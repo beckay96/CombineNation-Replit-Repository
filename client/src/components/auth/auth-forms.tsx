@@ -16,18 +16,32 @@ import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema, type InsertUser } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
+type LoginFormData = {
+  username: string;
+  password: string;
+};
+
 export function AuthForms() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const { loginMutation, registerMutation } = useAuth();
 
-  const loginForm = useForm({
+  const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(
       insertUserSchema.pick({ username: true, password: true }),
     ),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
 
-  const registerForm = useForm({
+  const registerForm = useForm<InsertUser>({
     resolver: zodResolver(insertUserSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      fullName: "",
+    },
   });
 
   return (
@@ -93,7 +107,7 @@ export function AuthForms() {
         <Form {...registerForm}>
           <form
             onSubmit={registerForm.handleSubmit((data) =>
-              registerMutation.mutate(data as InsertUser)
+              registerMutation.mutate(data)
             )}
             className="space-y-4"
           >
