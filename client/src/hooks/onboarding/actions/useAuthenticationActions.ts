@@ -7,41 +7,31 @@ import { supabase } from '@/lib/supabase';
 const checkIfAccountExists = async (email: string): Promise<boolean> => {
   try {
     console.log('Checking if account exists for email:', email);
-    
-    // Check if the email exists in the auth.users table
-    // We do this by attempting to sign in with a fake password
-    // and checking if the error is "Invalid login credentials" (which means user exists)
-    // vs "User not found" (which means user doesn't exist)
+
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: 'fake-password-for-existence-check',
     });
-    
+
     if (!error) {
-      // If no error, the user exists and somehow the password worked (very unlikely)
       console.log('Account exists (and password unexpectedly worked)');
       return true;
     }
-    
-    // Check the error message to determine if user exists
+
     if (error.message.includes('Invalid login credentials')) {
-      // This means the user exists but password is wrong (which we expect)
       console.log('Account exists (invalid password error)');
       return true;
     } else if (error.message.includes('user not found') || 
                error.message.includes('User not found') || 
                error.message.includes('No user found')) {
-      // This means the user doesn't exist
       console.log('Account does not exist (user not found)');
       return false;
     }
-    
-    // For any other error, assume account might exist
+
     console.log('Error checking existence, assuming account might exist:', error.message);
     return false;
   } catch (e) {
     console.error('Error checking account existence:', e);
-    // If we can't determine, assume it doesn't exist to allow signup attempt
     return false;
   }
 };
@@ -62,7 +52,6 @@ export function useAuthenticationActions(
   const { signIn, signUp } = useAuth();
   const [isSigningUp, setIsSigningUp] = useState(false);
 
-  // Add debug logging
   useEffect(() => {
     console.log('Authentication state:', { 
       email, 
@@ -75,7 +64,6 @@ export function useAuthenticationActions(
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Guard against double submission
     if (isSigningUp) {
       console.log('Already processing signup request');
       return;
@@ -85,7 +73,6 @@ export function useAuthenticationActions(
     setIsProcessing(true);
 
     try {
-      // Form validation
       if (!email || !password) {
         throw new Error('Please enter your email and password');
       }
@@ -108,7 +95,6 @@ export function useAuthenticationActions(
           throw new Error('Profile was not created properly during signup');
         }
 
-        // Show confirmation toast
         toast({
           title: 'Account created',
           description: 'Your account has been created successfully.',
@@ -116,12 +102,11 @@ export function useAuthenticationActions(
 
         resetFormFields();
 
-        // Move to the next step after successful signup
-        setStep(1); // Personal details step
+        // Move to profile details step (step 2) after successful signup
+        setStep(2);
       } catch (signupError: any) {
         console.error('Detailed signup error:', signupError);
 
-        // Check if the error is because the account already exists
         if (signupError.message && (
           signupError.message.includes('already registered') || 
           signupError.message.includes('already exists') ||
@@ -129,13 +114,12 @@ export function useAuthenticationActions(
         )) {
           console.log('Account already exists for this email (from signup error)');
           setAccountExists(true);
-          
-          // Now we attempt to sign in with the provided credentials
+
           try {
             console.log('Attempting to sign in with provided credentials');
             await signIn(email, password);
             resetFormFields();
-            setStep(1); // Move to next step if login succeeds
+            setStep(2); // Also update here to move to profile details
           } catch (signInError) {
             console.log('Sign in attempt failed, user needs to try again with correct credentials');
             toast({
@@ -143,13 +127,11 @@ export function useAuthenticationActions(
               description: 'This email is already registered. Please log in instead.',
               variant: 'destructive',
             });
-            // Don't rethrow, we'll stay on the login tab
           }
-          
+
           return;
         }
 
-        // If it's any other error, rethrow it
         throw signupError;
       }
     } catch (error) {
