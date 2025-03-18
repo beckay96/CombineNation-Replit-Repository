@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,19 +14,19 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import * as React from 'react';
 
-// Login form schema
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+// Steps for the onboarding process
+const STEPS = [
+  { number: 1, title: 'Create your account' },
+  { number: 2, title: 'Personal details' },
+  { number: 3, title: 'Choose your experience' }
+];
 
 // Registration form schema
 const registerSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
   displayName: z.string().min(2, "Display name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -38,18 +37,9 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function AuthForms() {
-  const [activeTab, setActiveTab] = useState<"login" | "signup">("signup");
-  const { loginMutation, registerMutation } = useAuth();
+  const { registerMutation } = useAuth();
 
-  const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const registerForm = useForm<RegisterFormData>({
+  const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
@@ -65,145 +55,112 @@ export function AuthForms() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-medium font-dyslexic">Welcome to CombineNation</h2>
+    <div className="w-full max-w-2xl mx-auto px-4 py-8">
+      {/* Step Indicator */}
+      <div className="w-full mb-8">
+        <div className="flex items-center justify-between">
+          {STEPS.map((step, idx) => (
+            <React.Fragment key={step.number}>
+              <div className="flex flex-col items-center gap-2">
+                <div className={`
+                  w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium
+                  ${step.number === 1 ? 'bg-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}
+                `}>
+                  {step.number}
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {step.title}
+                </span>
+              </div>
+              {idx < STEPS.length - 1 && (
+                <div className="h-[2px] flex-1 mx-4 bg-gray-200 dark:bg-gray-700" />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as "login" | "signup")}
-        className="w-full"
-      >
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="login">Log In</TabsTrigger>
-          <TabsTrigger value="signup">Create Account</TabsTrigger>
-        </TabsList>
+      {/* Registration Form */}
+      <div className="w-full max-w-lg mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-medium">Create your account</h2>
+        </div>
 
-        <TabsContent value="login">
-          <Form {...loginForm}>
-            <form
-              onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}
-              className="space-y-4"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="your.email@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="********" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="********" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="w-full bg-purple-500 hover:bg-purple-600"
+              disabled={registerMutation.isPending}
             >
-              <FormField
-                control={loginForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={loginForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending && (
+              {registerMutation.isPending ? (
+                <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Log In
-              </Button>
-            </form>
-          </Form>
-        </TabsContent>
-
-        <TabsContent value="signup">
-          <Form {...registerForm}>
-            <form
-              onSubmit={registerForm.handleSubmit(handleRegister)}
-              className="space-y-4"
-            >
-              <FormField
-                control={registerForm.control}
-                name="displayName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={registerForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={registerForm.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={registerForm.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={registerMutation.isPending}
-              >
-                {registerMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Create Account
-              </Button>
-            </form>
-          </Form>
-        </TabsContent>
-      </Tabs>
+                  Creating account...
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
