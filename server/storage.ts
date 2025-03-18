@@ -1,6 +1,7 @@
 import { User, InsertUser, EducationResource, FamilyTask, WellbeingLog } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import { SupabaseStorage } from "./storage/supabase";
 
 const MemoryStore = createMemoryStore(session);
 
@@ -8,16 +9,16 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   // Education resources
   getEducationResources(userId: number): Promise<EducationResource[]>;
   createEducationResource(resource: Omit<EducationResource, "id">): Promise<EducationResource>;
-  
+
   // Family tasks
   getFamilyTasks(userId: number): Promise<FamilyTask[]>;
   createFamilyTask(task: Omit<FamilyTask, "id">): Promise<FamilyTask>;
   updateFamilyTask(id: number, task: Partial<FamilyTask>): Promise<FamilyTask>;
-  
+
   // Wellbeing logs
   getWellbeingLogs(userId: number): Promise<WellbeingLog[]>;
   createWellbeingLog(log: Omit<WellbeingLog, "id">): Promise<WellbeingLog>;
@@ -25,6 +26,7 @@ export interface IStorage {
   sessionStore: session.Store;
 }
 
+// Keep MemStorage as a fallback implementation
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private educationResources: Map<number, EducationResource>;
@@ -116,4 +118,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Choose storage implementation based on environment
+// Default to Supabase unless explicitly set to use memory storage
+const useMemory = process.env.STORAGE_TYPE === 'memory';
+export const storage: IStorage = useMemory ? new MemStorage() : new SupabaseStorage();
