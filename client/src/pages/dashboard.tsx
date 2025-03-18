@@ -3,10 +3,9 @@ import { EducationTools } from "@/components/dashboard/education-tools";
 import { FamilyManagement } from "@/components/dashboard/family-management";
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/use-theme";
-import { useTheme } from "@/hooks/use-theme";
 
 export default function Dashboard() {
-  const { theme, setTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="flex min-h-screen">
@@ -32,10 +31,7 @@ export default function Dashboard() {
               variant="ghost"
               size="icon"
               className="rounded-full"
-              onClick={() => {
-                const { toggleTheme } = useTheme();
-                toggleTheme();
-              }}
+              onClick={toggleTheme}
             >
               <span className="sr-only">Toggle theme</span>
               {theme === 'neon' ? (
