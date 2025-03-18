@@ -1,22 +1,26 @@
 import { createClient } from "@supabase/supabase-js";
-import { Express } from "express";
+import { Express, Request } from "express";
 import session from "express-session";
 import { storage } from "./storage";
+
+declare module 'express-session' {
+  interface SessionData {
+    user: any;
+  }
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      isAuthenticated(): boolean;
+    }
+  }
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_ANON_KEY!
 );
-
-declare global {
-  namespace Express {
-    interface User {
-      id: string;
-      username: string;
-      [key: string]: any;
-    }
-  }
-}
 
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
@@ -33,26 +37,35 @@ export function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
 
-app.use((req, _res, next) => {
-  req.isAuthenticated = () => !!req.session.user;
-  next();
-});
+  app.use((req: Request, _res, next) => {
+    req.isAuthenticated = () => !!req.session.user;
+    next();
+  });
 
   app.post("/api/register", async (req, res) => {
     const { email, password } = req.body;
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
     if (error) {
       return res.status(400).json({ error: error.message });
     }
-    res.status(201).send("User registered:", req.body.email);
+
+    if (data.user) {
+      req.session.user = data.user;
+      res.status(201).json(data.user);
+    } else {
+      res.status(400).json({ error: "Failed to create user" });
+    }
   });
 
   app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
     if (error) {
       return res.status(400).json({ error: error.message });
     }
+
     req.session.user = data.user;
     res.status(200).json(data.user);
   });
@@ -62,11 +75,18 @@ app.use((req, _res, next) => {
     if (error) {
       return res.status(400).json({ error: error.message });
     }
-    req.session.destroy(() => res.sendStatus(200));
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to destroy session" });
+      }
+      res.sendStatus(200);
+    });
   });
 
   app.get("/api/user", (req, res) => {
-    if (!req.session.user) return res.sendStatus(401);
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
     res.json(req.session.user);
   });
 }

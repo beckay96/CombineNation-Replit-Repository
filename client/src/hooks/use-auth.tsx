@@ -1,11 +1,11 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { type User as SelectUser } from "@shared/schema";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 
 type AuthContextType = {
-  user: SelectUser | null;
+  user: User | null;
   isLoading: boolean;
   error: Error | null;
   loginMutation: any;
@@ -17,12 +17,12 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  const [authUser, setAuthUser] = useState<SelectUser | null>(null);
+  const [authUser, setAuthUser] = useState<User | null>(null);
 
   // Initialize auth state from Supabase
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (session?.user) {
         setAuthUser(session.user);
       } else {
         setAuthUser(null);
