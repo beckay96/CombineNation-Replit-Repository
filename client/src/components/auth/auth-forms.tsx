@@ -63,12 +63,12 @@ export function AuthForms() {
           >
             <FormField
               control={loginForm.control}
-              email="email"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -77,7 +77,7 @@ export function AuthForms() {
 
             <FormField
               control={loginForm.control}
-              password="password"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
@@ -113,12 +113,12 @@ export function AuthForms() {
           >
             <FormField
               control={registerForm.control}
-              email="email"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +127,7 @@ export function AuthForms() {
 
             <FormField
               control={registerForm.control}
-              displayName="displayName"
+              name="displayName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Display Name</FormLabel>
@@ -141,7 +141,7 @@ export function AuthForms() {
 
             <FormField
               control={registerForm.control}
-              password="password"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
