@@ -13,19 +13,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
-import { insertUserSchema, type InsertUser } from "@shared/schema";
-import { Loader2 } from "lucide-react";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 
-type LoginFormData = {
-  email: string;
-  password: string;
-};
+// Login form schema
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
-// Extend the registration schema to include password confirmation
-const registerSchema = insertUserSchema.extend({
-  confirmPassword: z.string()
-    .min(1, "Password confirmation is required"),
+type LoginFormData = z.infer<typeof loginSchema>;
+
+// Registration form schema
+const registerSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  displayName: z.string().min(2, "Display name must be at least 2 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -38,9 +42,7 @@ export function AuthForms() {
   const { loginMutation, registerMutation } = useAuth();
 
   const loginForm = useForm<LoginFormData>({
-    resolver: zodResolver(
-      insertUserSchema.pick({ email: true, password: true }),
-    ),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -58,8 +60,8 @@ export function AuthForms() {
   });
 
   const handleRegister = async (data: RegisterFormData) => {
-    const { confirmPassword, ...userData } = data;
-    registerMutation.mutate(userData as InsertUser);
+    const { confirmPassword, ...registerData } = data;
+    registerMutation.mutate(registerData);
   };
 
   return (
