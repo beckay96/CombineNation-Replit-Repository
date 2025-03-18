@@ -8,14 +8,19 @@ const MemoryStore = createMemoryStore(session);
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!,
+  process.env.SUPABASE_HOST_URL_COMBINENATION_PLATFORM!,
+  process.env.SUPABASE_ANON_KEY_COMBINENATION_PLATFORM!,
   {
     auth: {
       persistSession: false // Since we're using our own session management
     }
   }
 );
+
+// Log connection status
+supabase.from('users').select('id').limit(1)
+  .then(() => console.log('Supabase connected successfully'))
+  .catch(err => console.error('Supabase connection error:', err));
 
 export class SupabaseStorage implements IStorage {
   public sessionStore: session.Store;
