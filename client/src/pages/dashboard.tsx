@@ -1,7 +1,8 @@
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { EducationTools } from "@/components/dashboard/education-tools";
 import { FamilyManagement } from "@/components/dashboard/family-management";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import { useTheme } from "@/hooks/use-theme";
 import { useTheme } from "@/hooks/use-theme";
 
 export default function Dashboard() {
@@ -31,7 +32,10 @@ export default function Dashboard() {
               variant="ghost"
               size="icon"
               className="rounded-full"
-              onClick={toggleTheme}
+              onClick={() => {
+                const { toggleTheme } = useTheme();
+                toggleTheme();
+              }}
             >
               <span className="sr-only">Toggle theme</span>
               {theme === 'neon' ? (
