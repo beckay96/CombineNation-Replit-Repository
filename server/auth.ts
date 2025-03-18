@@ -33,6 +33,11 @@ export function setupAuth(app: Express) {
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
 
+app.use((req, _res, next) => {
+  req.isAuthenticated = () => !!req.session.user;
+  next();
+});
+
   app.post("/api/register", async (req, res) => {
     const { email, password } = req.body;
     const { error } = await supabase.auth.signUp({ email, password });
