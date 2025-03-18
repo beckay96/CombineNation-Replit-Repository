@@ -7,7 +7,7 @@ export function ProtectedRoute({
   component: Component,
 }: {
   path: string;
-  component: () => React.JSX.Element;
+  component: React.ComponentType<any>;
 }) {
   const { user, isLoading } = useAuth();
 
@@ -29,5 +29,5 @@ export function ProtectedRoute({
     );
   }
 
-  return <Component />
+  return <Route path={path}><Component onComplete={() => window.location.href = "/"} /></Route>
 }
