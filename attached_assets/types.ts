@@ -1,31 +1,34 @@
 
-import { FamilyMember, SpouseInfo, ChildInfo } from '@/types/family';
+import { ProfileDetails } from '@/hooks/auth/services/profileUpdateService';
 
-export interface FamilyMemberItemProps {
-  member: FamilyMember;
-  onRemove: () => void;
+export interface OnboardingStep {
+  title: string;
+  description: string;
 }
 
-export interface SpouseDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  spouseInfo: SpouseInfo;
-  setSpouseInfo: (info: SpouseInfo) => void;
-  onAddSpouse: () => void;
+export interface OnboardingState {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  step: number;
   isProcessing: boolean;
+  accountExists: boolean;
+  activeAuthTab: string;
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+  setConfirmPassword: (password: string) => void;
+  setActiveAuthTab: (tab: string) => void;
 }
 
-export interface ChildDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  childInfo: ChildInfo;
-  setChildInfo: (info: ChildInfo) => void;
-  onAddChild: () => void;
-  isProcessing: boolean;
-  generateMockEmail: (firstName: string, lastName: string) => string;
-}
-
-export interface FamilyMembersListProps {
-  familyMembers: FamilyMember[];
-  onRemoveMember: (index: number) => void;
+export interface OnboardingActions {
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+  setConfirmPassword: (password: string) => void;
+  handleRoleSelect: (role: 'educator' | 'family' | 'both' | 'solo') => void;
+  handleNext: () => void;
+  handleBack: () => void;
+  handleSignup: (e: React.FormEvent) => Promise<void>;
+  handleProfileSubmit: (data: ProfileDetails) => Promise<void>;
+  handleFamilySetupComplete: () => void;
+  handleSchoolSetupComplete: () => void;
 }
