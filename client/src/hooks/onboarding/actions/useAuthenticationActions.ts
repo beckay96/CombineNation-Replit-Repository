@@ -3,7 +3,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 
-// A more reliable way to check if an account exists
 const checkIfAccountExists = async (email: string): Promise<boolean> => {
   try {
     console.log('Checking if account exists for email:', email);
@@ -102,8 +101,8 @@ export function useAuthenticationActions(
 
         resetFormFields();
 
-        // Move to profile details step (step 2) after successful signup
-        setStep(2);
+        // Move to role selection step (step 1) after successful signup
+        setStep(1);
       } catch (signupError: any) {
         console.error('Detailed signup error:', signupError);
 
@@ -119,7 +118,7 @@ export function useAuthenticationActions(
             console.log('Attempting to sign in with provided credentials');
             await signIn(email, password);
             resetFormFields();
-            setStep(2); // Also update here to move to profile details
+            setStep(1); // Move to role selection after successful login
           } catch (signInError) {
             console.log('Sign in attempt failed, user needs to try again with correct credentials');
             toast({

@@ -9,14 +9,15 @@ import StepIndicator from './StepIndicator';
 import { useAppState } from '@/hooks/appState/AppStateContext';
 
 const ONBOARDING_STEPS = [
-  'Create your account',
-  'Personal details',
-  'Choose your experience'
+  { number: 1, title: 'Create your account' },
+  { number: 2, title: 'Choose your experience' },
+  { number: 3, title: 'Personal details' }
 ];
 
 interface OnboardingContentProps {
   step: number;
-  onStepComplete: (data: any) => Promise<void>;
+  onSignupSubmit: (e: React.FormEvent) => Promise<void>;
+  onProfileSubmit: (data: ProfileDetails) => Promise<void>;
   onOptionSelect: (optionIndex: number) => void;
   onFamilySetupComplete: () => void;
   onSchoolSetupComplete: () => void;
@@ -32,12 +33,12 @@ interface OnboardingContentProps {
   setConfirmPassword: (confirmPassword: string) => void;
   displayName: string;
   setDisplayName: (displayName: string) => void;
-
 }
 
 const OnboardingContent: React.FC<OnboardingContentProps> = ({
   step,
-  onStepComplete,
+  onSignupSubmit,
+  onProfileSubmit,
   onOptionSelect,
   onFamilySetupComplete,
   onSchoolSetupComplete,
@@ -56,38 +57,46 @@ const OnboardingContent: React.FC<OnboardingContentProps> = ({
 }) => {
   const { isAddingFamily, isAddingSchool } = useAppState();
 
+  // Only show step indicator for signup flow and after account creation
+  const showStepIndicator = activeAuthTab === 'signup' && step > 0;
+
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-8">
-      <StepIndicator currentStep={step} steps={ONBOARDING_STEPS} />
+      {showStepIndicator && <StepIndicator currentStep={step} steps={ONBOARDING_STEPS} />}
 
       {step === 0 && (
-        <AccountCreationStep 
-          onStepComplete={onStepComplete}
-          isLoading={isLoading || isProcessing}
-          accountExists={accountExists}
-          activeTab={activeAuthTab}
-          email={email} 
-          setEmail={setEmail} 
-          password={password} 
-          setPassword={setPassword} 
-          confirmPassword={confirmPassword} 
-          setConfirmPassword={setConfirmPassword}
-          displayName={displayName}
-          setDisplayName={setDisplayName}
-        />
+        <div className="w-full max-w-lg mx-auto">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            {activeAuthTab === 'login' ? 'Welcome Back to CombineNation' : 'Welcome to CombineNation'}
+          </h1>
+          <AccountCreationStep 
+            email={email} 
+            setEmail={setEmail} 
+            password={password} 
+            setPassword={setPassword} 
+            confirmPassword={confirmPassword} 
+            setConfirmPassword={setConfirmPassword}
+            displayName={displayName}
+            setDisplayName={setDisplayName}
+            onSubmit={onSignupSubmit} 
+            isLoading={isLoading || isProcessing} 
+            accountExists={accountExists} 
+            activeTab={activeAuthTab} 
+          />
+        </div>
       )}
 
       {step === 1 && (
-        <ProfileDetailsStep 
-          onSubmit={onStepComplete} 
-          isLoading={isProcessing} 
+        <WelcomeStep 
+          selectedOptionIndex={null} 
+          onOptionSelect={onOptionSelect} 
         />
       )}
 
       {step === 2 && (
-        <WelcomeStep 
-          selectedOptionIndex={null} 
-          onOptionSelect={onOptionSelect} 
+        <ProfileDetailsStep 
+          onSubmit={onProfileSubmit} 
+          isLoading={isProcessing} 
         />
       )}
 
