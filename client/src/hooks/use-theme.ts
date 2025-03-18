@@ -7,30 +7,33 @@ export function useTheme() {
   useEffect(() => {
     // Initialize theme from localStorage or user profile
     const initializeTheme = async () => {
-      const stored = localStorage.getItem('theme');
+      try {
+        // Try to get user's theme preference from their profile
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('neon_mode')
+            .eq('id', user.id)
+            .single();
 
-      // Try to get user's theme preference from their profile
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('neon_mode')
-          .eq('id', user.id)
-          .single();
-
-        if (profile) {
-          const themeFromDB = profile.neon_mode ? 'neon' : 'light';
-          setThemeState(themeFromDB);
-          localStorage.setItem('theme', themeFromDB);
-          document.body.className = themeFromDB === 'neon' ? 'neon-mode' : 'light-mode';
-          return;
+          if (profile) {
+            const themeFromDB = profile.neon_mode ? 'neon' : 'light';
+            setThemeState(themeFromDB);
+            document.documentElement.className = themeFromDB === 'neon' ? 'dark' : 'light';
+            localStorage.setItem('theme', themeFromDB);
+            return;
+          }
         }
-      }
 
-      // Fallback to localStorage if no user or profile
-      if (stored === 'neon' || stored === 'light') {
-        setThemeState(stored);
-        document.body.className = stored === 'neon' ? 'neon-mode' : 'light-mode';
+        // Fallback to localStorage if no user or profile
+        const stored = localStorage.getItem('theme') as 'neon' | 'light' | null;
+        if (stored === 'neon' || stored === 'light') {
+          setThemeState(stored);
+          document.documentElement.className = stored === 'neon' ? 'dark' : 'light';
+        }
+      } catch (error) {
+        console.error('Error initializing theme:', error);
       }
     };
 
@@ -38,17 +41,25 @@ export function useTheme() {
   }, []);
 
   const setTheme = async (newTheme: 'neon' | 'light') => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.body.className = newTheme === 'neon' ? 'neon-mode' : 'light-mode';
+    try {
+      setThemeState(newTheme);
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.className = newTheme === 'neon' ? 'dark' : 'light';
 
-    // Update user's profile in database if logged in
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ neon_mode: newTheme === 'neon' })
-        .eq('id', user.id);
+      // Update user's profile in database if logged in
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ neon_mode: newTheme === 'neon' })
+          .eq('id', user.id);
+
+        if (error) {
+          console.error('Error updating theme preference:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error setting theme:', error);
     }
   };
 

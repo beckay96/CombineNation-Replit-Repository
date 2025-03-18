@@ -43,18 +43,49 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/register", async (req, res) => {
-    const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { email, password, displayName } = req.body;
 
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
+    try {
+      // Create auth user
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            display_name: displayName
+          }
+        }
+      });
 
-    if (data.user) {
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      if (!data.user) {
+        return res.status(400).json({ error: "Failed to create user" });
+      }
+
+      // Create profile entry
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: data.user.id,
+          email: email,
+          display_name: displayName,
+          neon_mode: false,
+          profile_set_up_complete: false
+        });
+
+      if (profileError) {
+        console.error('Error creating profile:', profileError);
+        return res.status(400).json({ error: "Failed to create user profile" });
+      }
+
       req.session.user = data.user;
       res.status(201).json(data.user);
-    } else {
-      res.status(400).json({ error: "Failed to create user" });
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
     }
   });
 
