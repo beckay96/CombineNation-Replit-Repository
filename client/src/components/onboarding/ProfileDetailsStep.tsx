@@ -28,7 +28,7 @@ const ProfileDetailsStep: React.FC<ProfileDetailsStepProps> = ({
   });
 
   return (
-    <div className="w-full max-w-lg mx-auto space-y-6">
+    <div className="w-full max-w-lg mx-auto space-y-6 p-6 bg-card rounded-lg shadow-md">
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-medium font-dyslexic">Profile Details</h2>
         <p className="text-muted-foreground font-opensans">

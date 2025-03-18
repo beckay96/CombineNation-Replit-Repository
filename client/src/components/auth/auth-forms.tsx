@@ -79,7 +79,7 @@ export function AuthForms() {
         <Form {...loginForm}>
           <form
             onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))}
-            className="space-y-4"
+            className="space-y-4 w-full max-w-md mx-auto p-6 bg-card rounded-lg shadow-lg"
           >
             <FormField
               control={loginForm.control}
