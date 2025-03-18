@@ -118,7 +118,32 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Choose storage implementation based on environment
-// Default to Supabase unless explicitly set to use memory storage
-const useMemory = process.env.STORAGE_TYPE === 'memory';
-export const storage: IStorage = useMemory ? new MemStorage() : new SupabaseStorage();
+/**
+ * Storage factory that creates the appropriate storage implementation based on environment variables.
+ * Required environment variables:
+ * - STORAGE_TYPE: 'supabase' | 'memory' (default: 'memory')
+ * For Supabase storage:
+ * - SUPABASE_URL: Supabase project URL
+ * - SUPABASE_ANON_KEY: Supabase anonymous key
+ */
+function createStorage(): IStorage {
+  const storageType = process.env.STORAGE_TYPE || 'memory';
+
+  switch (storageType) {
+    case 'supabase':
+      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+        console.warn('Supabase credentials not found, falling back to memory storage');
+        return new MemStorage();
+      }
+      return new SupabaseStorage();
+
+    case 'memory':
+      return new MemStorage();
+
+    default:
+      console.warn(`Unknown storage type "${storageType}", falling back to memory storage`);
+      return new MemStorage();
+  }
+}
+
+export const storage: IStorage = createStorage();

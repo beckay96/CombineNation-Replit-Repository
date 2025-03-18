@@ -9,7 +9,12 @@ const MemoryStore = createMemoryStore(session);
 // Initialize Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
+  process.env.SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      persistSession: false // Since we're using our own session management
+    }
+  }
 );
 
 export class SupabaseStorage implements IStorage {
@@ -18,8 +23,22 @@ export class SupabaseStorage implements IStorage {
   constructor() {
     // We still use MemoryStore for sessions as Supabase doesn't handle sessions
     this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000,
+      checkPeriod: 86400000, // 24 hours
     });
+
+    // Verify database connection on startup
+    this.verifyConnection();
+  }
+
+  private async verifyConnection() {
+    try {
+      const { error } = await supabase.from('users').select('id').limit(1);
+      if (error) throw error;
+      console.log('Successfully connected to Supabase');
+    } catch (error) {
+      console.error('Failed to connect to Supabase:', error);
+      throw new Error('Could not connect to Supabase database');
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -28,7 +47,7 @@ export class SupabaseStorage implements IStorage {
       .select()
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -39,8 +58,8 @@ export class SupabaseStorage implements IStorage {
       .select()
       .eq('username', username)
       .single();
-    
-    if (error && error.code !== 'PGRST116') throw error;
+
+    if (error && error.code !== 'PGRST116') throw error; // Ignore not found error
     return data;
   }
 
@@ -50,7 +69,7 @@ export class SupabaseStorage implements IStorage {
       .insert([user])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -60,7 +79,7 @@ export class SupabaseStorage implements IStorage {
       .from('education_resources')
       .select()
       .eq('userId', userId);
-    
+
     if (error) throw error;
     return data;
   }
@@ -71,7 +90,7 @@ export class SupabaseStorage implements IStorage {
       .insert([resource])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -81,7 +100,7 @@ export class SupabaseStorage implements IStorage {
       .from('family_tasks')
       .select()
       .eq('userId', userId);
-    
+
     if (error) throw error;
     return data;
   }
@@ -92,7 +111,7 @@ export class SupabaseStorage implements IStorage {
       .insert([task])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -104,7 +123,7 @@ export class SupabaseStorage implements IStorage {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -115,7 +134,7 @@ export class SupabaseStorage implements IStorage {
       .select()
       .eq('userId', userId)
       .order('createdAt', { ascending: false });
-    
+
     if (error) throw error;
     return data;
   }
@@ -126,7 +145,7 @@ export class SupabaseStorage implements IStorage {
       .insert([log])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
