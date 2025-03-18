@@ -1,0 +1,110 @@
+Sign-Up Process Overview
+Your sign-up flow consists of a multi-step onboarding process that:
+
+Captures user authentication details
+Collects profile information
+Offers role selection
+Conditionally presents school/family setup based on selection
+Key Files and Components
+The process is managed through these primary files:
+
+Onboarding Components:
+
+OnboardingInitial.tsx - The entry point wrapper
+OnboardingFlow.tsx - Manages the overall flow and steps
+OnboardingContent.tsx - Renders the appropriate step content
+State Management:
+
+useOnboarding.tsx - Main hook orchestrating the entire process
+useOnboardingState.ts - Manages form data and UI state
+useOnboardingActions.ts - Handles actions like signup and navigation
+Auth Services:
+
+signUpService.ts - Handles Supabase auth signup
+signInService.ts - Handles login functionality
+Detailed Step-by-Step Flow
+Step 0: Account Creation
+When a user starts the sign-up process:
+
+The OnboardingInitial component renders the OnboardingFlow
+OnboardingContent shows the AccountCreationStep
+User enters email, password, and display name in the SignupForm
+On form submission, handleSignup in useAuthenticationActions.ts is called
+This function:
+Validates form data
+Calls the signUp method from useAuth
+Which in turn calls signUpWithEmail in signUpService.ts
+Creates the auth user in Supabase
+Creates a profile record with the user ID matching the auth ID
+Maps the DB profile to the frontend UserProfile model
+Step 1: Personal Details
+After successful signup:
+
+The step state advances to 1
+ProfileDetailsStep component is rendered
+User enters first name, last name, date of birth, etc.
+On submission, handleProfileSubmit in useProfileActions.ts is called
+This updates the user's profile in the database
+Then advances to the next step
+Step 2: Role Selection (Experience Choice)
+The WelcomeStep displays the option cards (formerly called roles, now just options)
+User selects one of four options:
+Option 0: Education/work (sets isAddingSchool flag)
+Option 1: Family (sets isAddingFamily flag)
+Option 2: Both (sets both flags)
+Option 3: Solo (sets neither flag)
+handleRoleSelect in useOnboardingActions.ts processes the selection
+Sets appropriate app state flags based on the selection
+For Solo users, completes the process immediately
+For others, moves to the appropriate next setup step
+Step 3/4: School/Family Setup
+Based on the selected option:
+
+If isAddingFamily is true, shows family setup
+If isAddingSchool is true, shows school setup
+Both steps have their own completion handlers that finalize the profile
+State Management Details
+Your onboarding flow uses a combination of:
+
+Local Component State:
+
+Form inputs (email, password, etc.) in useOnboardingState
+Current step tracking
+Processing/loading indicators
+Global Auth State:
+
+AuthContext maintains authentication status
+Stores the user profile once authenticated
+Global App State:
+
+AppStateContext tracks the selection-dependent flags:
+isAddingFamily
+isAddingSchool
+familyFinishedAdding
+schoolCreatedFully
+Database Interaction
+Authentication:
+
+Created in Supabase auth.users table
+ID is the primary identifier for the user
+Profile Storage:
+
+Profile record created in profiles table
+ID field is a foreign key to auth.users
+Contains display name and other profile data
+No role field stored (the UI selection doesn't persist as a role)
+State Flow:
+
+signUpWithEmail creates auth user
+A profile record is immediately created
+Additional profile data added in subsequent steps
+Option selection influences the UI flow but isn't stored as a role
+Error Handling and Edge Cases
+The system includes:
+
+Retry mechanisms for profile creation
+Account existence checks
+Error messages for common issues
+Automatic session/authentication state synchronization
+Timeouts to prevent indefinite loading states
+This architecture separates concerns well, with form state and actions in separate modules, and the database interaction logic isolated in service files.
