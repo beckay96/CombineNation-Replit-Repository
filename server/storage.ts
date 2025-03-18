@@ -131,7 +131,7 @@ function createStorage(): IStorage {
 
   switch (storageType) {
     case 'supabase':
-      if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+      if (!process.env.SUPABASE_HOST_URL_COMBINENATION_PLATFORM || !process.env.SUPABASE_ANON_KEY_COMBINENATION_PLATFORM) {
         console.warn('Supabase credentials not found, falling back to memory storage');
         return new MemStorage();
       }
