@@ -3,14 +3,19 @@ import { EducationTools } from "@/components/dashboard/education-tools";
 import { FamilyManagement } from "@/components/dashboard/family-management";
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/use-theme";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { theme, toggleTheme } = useTheme();
 
+  useEffect(() => {
+    console.log('Dashboard render - current theme:', theme, 
+      'document class:', document.documentElement.className);
+  }, [theme]);
+
   return (
     <div className="flex min-h-screen">
       <SidebarNav />
-
       <main className="flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -25,13 +30,16 @@ export default function Dashboard() {
           {/* Theme Toggle */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Neon or Light Mode?
+              {theme === 'neon' ? 'Dark Mode' : 'Light Mode'}
             </span>
             <Button
               variant="ghost"
               size="icon"
               className="rounded-full"
-              onClick={toggleTheme}
+              onClick={() => {
+                console.log('Dashboard toggle clicked, current theme:', theme);
+                toggleTheme();
+              }}
             >
               <span className="sr-only">Toggle theme</span>
               {theme === 'neon' ? (
